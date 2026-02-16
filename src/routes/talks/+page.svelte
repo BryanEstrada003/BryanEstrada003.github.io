@@ -1,49 +1,74 @@
 <script lang="ts">
 	import EmptyResult from '$lib/components/common/empty-result/empty-result.svelte';
 	import SearchPage from '$lib/components/common/search-page/search-page.svelte';
-	import EducationCard from '$lib/components/education/education-card.svelte';
+	import TalkCard from '$lib/components/talks/talk-card.svelte';
 	import Icon from '$lib/components/ui/icon/icon.svelte';
-	import EducationData from '$lib/data/education';
+	import Toggle from '$lib/components/ui/toggle/toggle.svelte';
+	import TalksData from '$lib/data/talks';
+	import SkillsData from '$lib/data/skills';
+	import type { Skill } from '$lib/data/types';
+
+	interface SkillFilter extends Skill {
+		isSelected?: boolean;
+	}
+
+	let filters: Array<SkillFilter> = $state(
+		SkillsData.items.filter((it) => {
+			return TalksData.items.some((talk) =>
+				talk.skills.some((skill) => skill.slug === it.slug)
+			);
+		})
+	);
 
 	let search = $state('');
-
 	let result = $derived(
-		EducationData.items.filter(
-			(it) =>
-				it.name.toLowerCase().includes(search.toLowerCase()) ||
-				it.description.toLowerCase().includes(search) ||
-				it.location.toLowerCase().includes(search) ||
-				it.degree.toLowerCase().includes(search) ||
-				it.organization.toLowerCase().includes(search)
-		)
+		TalksData.items.filter((talk) => {
+			const isFiltered =
+				filters.every((item) => !item.isSelected) ||
+				talk.skills.some((tech) =>
+					filters.some((filter) => filter.isSelected && filter.slug === tech.slug)
+				);
+
+			const isSearched =
+				search.trim().length === 0 ||
+				talk.name.trim().toLowerCase().includes(search.trim().toLowerCase());
+
+			return isFiltered && isSearched;
+		})
 	);
+
+	const toggleSelected = (slug: string) => {
+		filters = filters.map((it) => (it.slug === slug ? { ...it, isSelected: !it.isSelected } : it));
+	};
 
 	const onSearch = (query: string) => (search = query);
 </script>
 
-<SearchPage title={EducationData.title} {onSearch}>
-	{#if result.length === 0}
-		<EmptyResult />
-	{:else}
-		<div class="flex flex-col gap-6 lg:gap-0">
-			{#each result as it, index (it.slug)}
-				<div class={`flex ${index % 2 !== 0 ? 'flex-row-reverse' : 'flex-row'} gap-4`}>
-					<div class="flex flex-1 flex-col justify-center lg:py-[50px]">
-						<EducationCard {it} />
-					</div>
-					<div
-						class="hidden h-[full] min-w-0 flex-shrink-0 flex-col items-center lg:flex"
-						style="--color: hsl(var(--border) / var(--tw-border-opacity, 1)); --icon: hsl(var(--foreground) / var(--tw-border-opacity, 1))"
-					>
-						<div class="w-[1px] flex-1 bg-[--color]"></div>
-						<div class="my-2 text-[--icon]">
-							<Icon icon="i-carbon-radio-button-checked" />
-						</div>
-						<div class="w-[1px] flex-1 bg-[--color]"></div>
-					</div>
-					<div class="hidden min-w-0 flex-1 flex-shrink-0 flex-row lg:flex"></div>
-				</div>
+<SearchPage title={TalksData.title} {onSearch}>
+	<div class="flex flex-1 flex-col gap-8">
+		<div class="flex flex-row flex-wrap gap-2">
+			{#each filters as it (it.slug)}
+				<Toggle
+					pressed={it.isSelected}
+					variant="outline"
+					class="flex flex-row items-center gap-2 rounded-lg"
+					on:click={() => toggleSelected(it.slug)}
+				>
+					{#if it.isSelected}
+						<Icon icon="i-carbon-close" />
+					{/if}
+					{it.name}</Toggle
+				>
 			{/each}
 		</div>
-	{/if}
+		{#if result.length === 0}
+			<EmptyResult />
+		{:else}
+			<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+				{#each result as it (it.slug)}
+					<TalkCard talk={it} />
+				{/each}
+			</div>
+		{/if}
+	</div>
 </SearchPage>

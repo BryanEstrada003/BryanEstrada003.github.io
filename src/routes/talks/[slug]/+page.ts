@@ -1,8 +1,8 @@
-import EducationData from '$lib/data/education';
+import ProjectsData from '$lib/data/projects';
 
 export function load({ params }: { params: Record<string, string> }) {
 	if (params.slug) {
-		const item = EducationData.items.find((item) => {
+		const item = ProjectsData.items.find((item) => {
 			return item.slug === params.slug;
 		});
 

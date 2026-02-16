@@ -28,6 +28,10 @@ export type Screenshot = {
 	label: string;
 };
 
+export type CarrouselImage = {
+	src: string;
+};
+
 export interface Item<S extends string = string> {
 	slug: S;
 	name: string;
@@ -35,6 +39,7 @@ export interface Item<S extends string = string> {
 	shortDescription: string;
 	description: string;
 	screenshots?: Array<Screenshot>;
+	carrousel?: Array<CarrouselImage>;
 }
 
 export interface Link {
@@ -63,6 +68,16 @@ export interface Project<S extends string = string> extends Item<S> {
 	period: {
 		from: Date;
 		to?: Date;
+	};
+	type: string;
+	skills: Array<Skill<S>>;
+}
+
+export interface Talk<S extends string = string> extends Item<S> {
+	links: Array<Link>;
+	color: Color;
+	period: {
+		from: Date;
 	};
 	type: string;
 	skills: Array<Skill<S>>;
