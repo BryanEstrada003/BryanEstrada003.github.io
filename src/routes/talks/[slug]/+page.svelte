@@ -10,23 +10,20 @@
 	import H1 from '$lib/components/ui/typography/h1.svelte';
 	import Muted from '$lib/components/ui/typography/muted.svelte';
 	import Assets from '$lib/data/assets';
-	import type { Project } from '$lib/data/types';
-	import { computeExactDuration, getMonthAndYear, href } from '$lib/utils';
+	import type { Talk } from '$lib/data/types';
+	import { getMonthAndYear, getYouTubeId, href } from '$lib/utils';
 	import { mode } from 'mode-watcher';
 
-	let { data }: { data: { item?: Project } } = $props();
+	let { data }: { data: { item?: Talk } } = $props();
 
-	let title = $derived(`${data?.item?.name ?? 'Not Found'} - Projects`);
+	let title = $derived(`${data?.item?.name ?? 'Not Found'} - Talks`);
 	let banner = $derived(
 		($mode == 'dark' ? data?.item?.logo.dark : data.item?.logo.light) ?? Assets.Unknown.light
 	);
 
-	let duration = $derived(
-		`${getMonthAndYear(data.item?.period.from)} - ${getMonthAndYear(data.item?.period.to)} · ${computeExactDuration(
-			data.item?.period.from ?? new Date(),
-			data.item?.period.to
-		)}`
-	);
+	let date = $derived(getMonthAndYear(data.item?.period.from));
+
+	let youtubeId = $derived(data.item?.youtube ? getYouTubeId(data.item.youtube) : null);
 </script>
 
 <BasePage {title}>
@@ -37,7 +34,7 @@
 			<div class="flex w-full flex-col items-center justify-center gap-4">
 				<H1>{data.item.name}</H1>
 				<Muted>{data.item.type}</Muted>
-				<Muted>{duration}</Muted>
+				<Muted>{date}</Muted>
 				<Separator />
 				<div class="flex flex-row flex-wrap justify-center gap-2">
 					{#each data.item.links as link (link.to)}
@@ -61,21 +58,48 @@
 			</div>
 		</FancyBanner>
 		<Separator />
+		{#if youtubeId}
+			<div class="flex flex-col gap-2 px-4 pt-4">
+				<Muted>Video</Muted>
+				<div class="aspect-video w-full overflow-hidden rounded-lg">
+					<iframe
+						class="h-full w-full border-0"
+						src={`https://www.youtube.com/embed/${youtubeId}`}
+						title={data.item.name}
+						allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+						allowfullscreen
+					></iframe>
+				</div>
+			</div>
+			<Separator />
+		{:else if data.item.carrousel && data.item.carrousel.length > 0}
+			<div class="flex flex-col gap-2 px-4 pt-4">
+				<Muted>Media</Muted>
+				<div class="grid grid-cols-1 gap-2 py-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+					{#each data.item.carrousel as img, index (index)}
+						<div class="overflow-hidden rounded-lg">
+							<img src={img.src} alt={`${data.item.name} ${index + 1}`} class="w-full object-cover" />
+						</div>
+					{/each}
+				</div>
+			</div>
+			<Separator />
+		{/if}
 		{#if data.item.description.trim()}
 			<Markdown content={data.item.description} />
 		{:else}
 			<EmptyMarkdown />
 		{/if}
 		<Separator />
-		<div class="flex flex-col gap-2 px-4 pt-4">
-			{#if data.item.screenshots && data.item.screenshots.length > 0}
+		{#if data.item.screenshots && data.item.screenshots.length > 0}
+			<div class="flex flex-col gap-2 px-4 pt-4">
 				<Muted>Screenshots</Muted>
 				<div class="grid grid-cols-1 gap-2 py-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 					{#each data.item.screenshots as img, index (index)}
 						<ScreenshotCard item={img} />
 					{/each}
 				</div>
-			{/if}
-		</div>
+			</div>
+		{/if}
 	{/if}
 </BasePage>
