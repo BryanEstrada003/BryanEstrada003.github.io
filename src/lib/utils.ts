@@ -126,6 +126,25 @@ export const getD = (date?: Date): string => {
 
 export const href = (url: string) => `${base}${url}`;
 
+export const getYouTubeId = (url: string): string | null => {
+	try {
+		const parsed = new URL(url);
+		if (parsed.hostname === 'youtu.be') {
+			return parsed.pathname.slice(1);
+		}
+		if (parsed.hostname.includes('youtube.com')) {
+			if (parsed.pathname.startsWith('/embed/')) {
+				return parsed.pathname.split('/embed/')[1];
+			}
+			return parsed.searchParams.get('v');
+		}
+	} catch {
+		// not a valid URL, treat as raw video ID
+		return url;
+	}
+	return null;
+};
+
 export const getMonthAndYear = (date?: Date) => {
 	if (!date) return 'Present';
 
