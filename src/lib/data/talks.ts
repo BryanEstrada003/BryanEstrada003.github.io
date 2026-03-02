@@ -29,6 +29,22 @@ const items: Array<Talk> = [
 		],
 		type: 'Personal Portfolio Website'
 	},
+	{
+		slug: 'intro-to-svelte',
+		color: '#ff3e00',
+		description:
+			'An introductory talk and workshop on building modern web applications with Svelte and SvelteKit. Covers reactive state management, component architecture, and deployment strategies.',
+		shortDescription: 'Workshop introducing Svelte and SvelteKit for modern web development.',
+		links: [{ to: 'https://github.com/BryanEstrada003', label: 'GitHub' }],
+		logo: Assets.Unknown,
+		name: 'Introduction to Svelte',
+		period: {
+			from: new Date(2025, 5, 15)
+		},
+		skills: getSkills('svelte'),
+		youtube: 'https://www.youtube.com/watch?v=rv3Yq-B8qp4',
+		type: 'Workshop'
+	}
 ];
 
 const title = 'Talks';

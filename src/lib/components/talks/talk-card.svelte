@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Assets from '$lib/data/assets';
 	import type { Talk } from '$lib/data/types';
-	import { getMonthAndYear, href } from '$lib/utils';
+	import { getMonthAndYear, getYouTubeId, href } from '$lib/utils';
 	import { ellipsify } from '@riadh-adrani/utils';
 	import { mode } from 'mode-watcher';
 	import ButtonLink from '../common/button-link/button-link.svelte';
@@ -29,8 +29,15 @@
 	const { talk }: { talk: Talk } = $props();
 
 	let from = $derived(getMonthAndYear(talk.period.from));
-	// let to = $derived(getMonthAndYear(talk.period.to));
-	// let exactDuration = $derived(computeExactDuration(talk.period.from, talk.period.to));
+
+	let youtubeId = $derived(talk.youtube ? getYouTubeId(talk.youtube) : null);
+	let mediaSrc = $derived(
+		youtubeId
+			? `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`
+			: talk.carrousel && talk.carrousel.length > 0
+				? talk.carrousel[0].src
+				: null
+	);
 </script>
 
 <FancyCard
@@ -38,11 +45,27 @@
 	class="flex h-full flex-col"
 	href={href(`/talks/${talk.slug}`)}
 >
+	{#if mediaSrc}
+		<div class="relative w-full overflow-hidden rounded-t-lg">
+			<img
+				src={mediaSrc}
+				alt={talk.name}
+				class="aspect-video w-full object-cover"
+			/>
+			{#if youtubeId}
+				<div
+					class="absolute inset-0 flex items-center justify-center bg-black/20"
+				>
+					<div
+						class="flex h-12 w-12 items-center justify-center rounded-full bg-red-600 text-white shadow-lg"
+					>
+						<Icon icon="i-carbon-play-filled" />
+					</div>
+				</div>
+			{/if}
+		</div>
+	{/if}
 	<CardHeader class="flex w-full flex-col gap-4">
-		<div class="flex w-full justify-center">
-			<img src={talk.logo.light} alt={talk.name} class="object-contain" />
-		</div>	
-
 		<div class="flex w-full flex-row items-center gap-1 overflow-x-hidden">
 			<CardTitle class="h-auto min-w-0 flex-1 overflow-x-hidden">
 				<Tooltip>
