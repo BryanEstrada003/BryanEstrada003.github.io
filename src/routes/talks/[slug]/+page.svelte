@@ -10,22 +10,19 @@
 	import H1 from '$lib/components/ui/typography/h1.svelte';
 	import Muted from '$lib/components/ui/typography/muted.svelte';
 	import Assets from '$lib/data/assets';
-	import type { Project } from '$lib/data/types';
-	import { computeExactDuration, getMonthAndYear, href } from '$lib/utils';
+	import type { Talk } from '$lib/data/types';
+	import { getD, href } from '$lib/utils';
 	import { mode } from 'mode-watcher';
 
-	let { data }: { data: { item?: Project } } = $props();
+	let { data }: { data: { item?: Talk } } = $props();
 
-	let title = $derived(`${data?.item?.name ?? 'Not Found'} - Projects`);
+	let title = $derived(`${data?.item?.name ?? 'Not Found'} - Talks`);
 	let banner = $derived(
 		($mode == 'dark' ? data?.item?.logo.dark : data.item?.logo.light) ?? Assets.Unknown.light
 	);
 
-	let duration = $derived(
-		`${getMonthAndYear(data.item?.period.from)} - ${getMonthAndYear(data.item?.period.to)} · ${computeExactDuration(
-			data.item?.period.from ?? new Date(),
-			data.item?.period.to
-		)}`
+	let date = $derived(
+		`${getD(data.item?.period.from)}`
 	);
 </script>
 
@@ -37,7 +34,7 @@
 			<div class="flex w-full flex-col items-center justify-center gap-4">
 				<H1>{data.item.name}</H1>
 				<Muted>{data.item.type}</Muted>
-				<Muted>{duration}</Muted>
+				<Muted>{date}</Muted>
 				<Separator />
 				<div class="flex flex-row flex-wrap justify-center gap-2">
 					{#each data.item.links as link (link.to)}

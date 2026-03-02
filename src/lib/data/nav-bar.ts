@@ -8,8 +8,8 @@ const items: Array<{
 	{ title: 'Skills', icon: 'i-carbon-assembly-cluster', href: '/skills' },
 	{ title: 'Projects', icon: 'i-carbon-cube', href: '/projects' },
 	{ title: 'Experience', icon: 'i-carbon-development', href: '/experience' },
-	{ title: 'Education', icon: 'i-carbon-education', href: '/education' },
 	{ title: 'Talks', icon: 'i-carbon-user-speaker', href: '/talks' },
+	{ title: 'Education', icon: 'i-carbon-education', href: '/education' },
 	{ title: 'Resume', icon: 'i-carbon-document', href: '/resume' }
 ];
 

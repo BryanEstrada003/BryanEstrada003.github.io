@@ -40,6 +40,7 @@ export interface Item<S extends string = string> {
 	description: string;
 	screenshots?: Array<Screenshot>;
 	carrousel?: Array<CarrouselImage>;
+	video?: string;
 }
 
 export interface Link {

@@ -119,6 +119,11 @@ export const getMonthName = (index: number): string => {
 	return monthNames[index];
 };
 
+export const getD = (date?: Date): string => {
+	if (!date) return '';
+	return `${date.getDate()} ${getMonthName(date.getMonth())} ${date.getFullYear()}`;
+};
+
 export const href = (url: string) => `${base}${url}`;
 
 export const getMonthAndYear = (date?: Date) => {

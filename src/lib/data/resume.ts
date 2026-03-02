@@ -1,6 +1,6 @@
 import { href } from '$lib/utils';
 
-const title = 'Resumé';
+const title = 'Resume';
 
 const resume = href('/pdf/CV2025.pdf');
 

@@ -1,6 +1,5 @@
 import { base } from '$app/paths';
 
-
 const url = (file: string) => `${base}/logos/${file}`;
 
 const asset = (lightFilename: string, darkFilename = lightFilename) => {
@@ -41,7 +40,8 @@ const Assets = {
 	Mai: asset('logo_mai.svg'),
 	SKLearn: asset('svg/scikit-learn.svg'),
 	Med: asset('medical-stud.png'),
-	SerBachiller: asset('ser-bachiller.jpg')
+	SerBachiller: asset('ser-bachiller.jpg'),
+	PreUbucon: asset('talks/preubucon.png')
 };
 
 export default Assets;
